@@ -1,0 +1,30 @@
+/webhooks:
+    post:
+      tags:
+        - Webhooks
+      summary: Returns Entitlements for a Subscriber.
+      description: Returns a Subscriber's Entitlements based on the Subscriber's web token.
+      operationId: postWebhook
+     
+      responses:
+        "200":
+          description: successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/UserEntitlementResponse"
+        "400":
+          description: Invalid status value
+          "404":
+           description: Not found 
+
+definitions:
+  UserEntitlementResponse:
+    type: object
+    example: { "COMMERCIAL_FREE": 1722659083, "ALL_PODCASTS": 1722659083 }
+    patternProperties:
+      "(.*?)":
+        type: integer
+        format: int64
+        description: Epoch time for when the entitlement expires.
+        example: 1722659083

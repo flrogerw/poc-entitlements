@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html style="background-color:#090527">
+
+<head>
+  <script src="https://js.stripe.com/v3/"></script>
+  <title>Audacy Subscriptions</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="checkout.css">
+  <script src="checkout.js" defer></script>
+</head>
+<body>
+  <table width="100%" style="margin-top: 68px;">
+    <tr>
+      <td width="20%" style="vertical-align: top;">
+        <img width="200" src="AUD_BIG.png">
+        <div class="css-76iiez" style="opacity: 1;">
+          <div>
+            <div class="css-dlmuzj">
+              <nav aria-label="Main" class="css-1omg6ht">
+                <ul class="css-10y56or">
+                  <li><a class="css-v1pgas" href="/subscriptions-some.html"><span aria-hidden="true" class="css-b48rip"
+                        style="width: 20px; height: 20px;"></span><span>Off Load Some</span></a></li>
+                  <li><a class="css-v1pgas" href="/subscriptions-all.html"><span aria-hidden="true" class="css-b48rip"
+                        style="width: 20px; height: 20px;"></span><span>Off Load All</span></a></li>
+                  <li><a class="css-v1pgas" href="/recover.html"><span aria-hidden="true" class="css-b48rip"
+                        style="width: 20px; height: 20px;"></span><span>Synchronization</span></a>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </td>
+      <td align="center">
+        <h2 style="color: white">Client Remains at Audacy for Payment</h2>
+        <h3 style="color: white">This page is NOT functional.  Please use the 'Off Load All' page instead</h3>
+        <section class="checkout-section">
+          <div class="product">
+            <div class="description">
+              <h2>Good Plan</h2>
+              <h5>$9.99 / month</h5>
+              <p>
+                "Discover the joy of music with Good, the perfect subscription music service for casual listeners. With
+                a vast collection of songs spanning multiple genres, Good provides an affordable and accessible platform
+                to enjoy your favorite tunes anytime, anywhere. Create playlists, explore new releases, and even listen
+                offline. It's music made easy and budget-friendly. Start your musical journey with Good today!"
+              </p>
+            </div>
+          </div>
+          <button class="checkout-and-portal-button" data-id="product1">Subscribe</button>
+        </section>
+        <section class="checkout-section">
+          <div class="product">
+            <div class="description">
+              <h2>Better Plan</h2>
+              <h5>$11.99 / month</h5>
+              <p>
+                "Elevate your music experience with Better, the ultimate subscription music service for true music
+                enthusiasts. Immerse yourself in a world of music like never before. Enjoy an extensive library of
+                songs, including exclusive releases and live performances. Let Better's intelligent algorithms curate
+                personalized recommendations based on your unique tastes. Create expertly crafted playlists and stream
+                music in high quality. Dive deeper into the stories behind the music with integrated lyrics and artist
+                interviews. Unleash your passion for music with Better!"
+              </p>
+            </div>
+          </div>
+          <button class="checkout-and-portal-button" data-id="product1">Subscribe</button>
+        </section>
+        <section class="checkout-section">
+          <div class="product">
+            <div class="description">
+              <h2>Best Plan</h2>
+              <h5>$14.99 / month</h5>
+              <p>
+                "The ultimate subscription music service for
+                discerning audiophiles. Prepare to be captivated by a music catalog like no other. Access the latest
+                releases, rare tracks, and a vast collection across every genre imaginable. Immerse yourself in ad-free,
+                high-definition audio streaming that will transport you to the heart of the music. Experience exclusive
+                artist collaborations and live events. Delve into the world of music with artist profiles,
+                behind-the-scenes documentaries, and curated playlists by industry experts."
+              </p>
+            </div>
+          </div>
+          <button class="checkout-and-portal-button" data-id="product1">Subscribe</button>
+        </section>
+      </td>
+    </tr>
+  </table>
+
+</body>
+
+<script>
+
+  var buttons = document.querySelectorAll('.checkout-and-portal-button');
+
+  buttons.forEach(function (button) {
+    button.addEventListener('click', function () {
+      var productId = this.getAttribute('data-id');
+      var endpoint = `http://localhost:8082/createintent`;
+
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', endpoint, true);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+          const stripe = Stripe("pk_test_51NEdvEIxCEK2HtGeaPRRILYlN0ugtHh5YZUBzIN0gRLYy3wJmIzOjiqgxMHJG0bVqAEFaGto49ZGJIhO2L0CiaNg00rfGU397m");
+          const { clientSecret } = JSON.parse(xhr.responseText);
+          const appearance = {
+            theme: 'stripe',
+          };
+          elements = stripe.elements({ appearance, clientSecret });
+
+          const linkAuthenticationElement = elements.create("linkAuthentication");
+          linkAuthenticationElement.mount("#link-authentication-element");
+
+          linkAuthenticationElement.on('change', (event) => {
+            emailAddress = event.value.email;
+          });
+
+          const paymentElementOptions = {
+            layout: "tabs",
+          };
+
+          const paymentElement = elements.create("payment", paymentElementOptions);
+          paymentElement.mount("#payment-element");
+        }
+        document.getElementById("modal").style.display = "block";
+        document.getElementById("overlay").style.display = "block";
+      };
+
+      var data = { items: [productId] };
+      xhr.send(JSON.stringify(data));
+    });
+  });
+</script>
+<div id="modal" class="modal">
+  <form id="payment-form">
+    <img width="200" src="AUD_BIG.png">
+    <div id="link-authentication-element">
+    </div>
+    <div id="payment-element">
+    </div>
+    <button id="submit">
+      <div class="spinner hidden" id="spinner"></div>
+      <span id="button-text">Pay now</span>
+    </button>
+    <br />
+    <button id="cancel" onclick="">
+      <span id="button-text">Cancel</span>
+    </button>
+    <div id="payment-message" class="hidden"></div>
+  </form>
+</div>
+<div id="overlay"></div>
+</body>
+
+</html>

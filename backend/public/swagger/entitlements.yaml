@@ -1,0 +1,176 @@
+paths:
+  /entitlements:
+    get:
+      tags:
+        - Entitlements
+      summary: Get a list of Entitlements from the Entitlement Service.
+      description: Returns a list of Entitlements.
+      operationId: getEntitlements
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/definitions/Entitlement"
+        "400":
+          description: Invalid credentials supplied
+        "404":
+          description: Resource not found
+        "405":
+          description: Validation exception
+    post:
+      tags:
+        - Entitlements
+      summary: Post a new Entitlement into the Entitlement Service.
+      description: Creates a new Entitlement within the Entitlement Service.
+      operationId: postEntitlement
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/definitions/Entitlement"
+        "400":
+          description: Invalid credentials supplied
+        "404":
+          description: Resource not found
+        "405":
+          description: Validation exception
+
+  /entitlements/{id}:
+    get:
+      tags:
+        - Entitlements
+      summary: Finds an Entitlement by ID
+      description: Returns all of an Entitlement's information based on the Entitlement ID.
+      operationId: findEntitlementById
+      parameters:
+        - name: id
+          in: path
+          description: Unique ID for the Entitlement within the Entitlement Service
+          required: true
+          schema:
+            type: integer
+            minimum: 0
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/EntitlementAll'
+        "400":
+          description: Invalid status value
+          "404":
+            description: Entitlement not found
+    put:
+      tags:
+        - Entitlements
+      summary: Update an Entitlement by ID
+      description: Updates an Entitlement's information based on the Entitlement ID.
+      operationId: updateEntitlementById
+      parameters:
+        - name: id
+          in: path
+          description: Unique integer ID for the Entitlement within the Entitlement Service
+          required: true
+          schema:
+            type: integer
+            minimum: 0
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/EntitlementAll'
+        "400":
+          description: Invalid status value
+          "404":
+            description: Entitlement not found
+    delete:
+      tags:
+        - Entitlements
+      summary: Deletes Entitlement by ID
+      description: Sets an Entitlement to in active and sets the end date based on the Entitlements ID.
+      operationId: deleteEntitlementById
+      parameters:
+        - name: id
+          in: path
+          description: Unique integer ID for the Entitlement.
+          required: true
+          schema:
+            type: integer
+            minimum: 0
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/Entitlement'
+        "400":
+          description: Invalid status value
+          "404":
+            description: Entitlement not found
+            
+definitions:
+  EntitlementAll:
+    allOf:
+      - $ref: '#/definitions/Entitlement'
+      - type: object
+        properties:
+          requestors:
+            description: An array of associated Entitlements.
+            type: array
+            items:
+              $ref: "#/definitions/Entitlement"
+          products:
+            description: An array of associated Products.
+            type: array
+            items:
+              $ref: "#/definitions/Product" 
+  Entitlement:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 10
+        description: Unique integer ID assigned to the Entitlement.
+      provider_trigger:
+        type: string
+        example: ENT_AD_FREE
+        description: Unique identifier assigned to the Entitlement to be shared with all associated Requestors.
+      name:
+        type: string
+        maximum: 256
+        minimum: 4
+        description: Friendly name for the Entitlement.
+        example: Add Free Music
+      description:
+        type: string
+        maximum: 256
+        minimum: 4
+        description: A friendly description of the Entitlement and all the bennifits accociated.
+        example: Add free music and all the benefits.
+      is_active:
+        type: boolean
+        description: Set an Entitlement as active/in active. This change cascades down to all entitled Members. 
+      start_date:
+        type: string
+        format: date-time
+        description: The date the Entitlement was added to the Entitlement Service.
+        example: 2023-08-10
+      end_date:
+        type: string
+        format: date-time
+        description: The date the Entitlement was 'removed' from the Entitlement Service.
+        example: 2024-08-10
+        nullable: true

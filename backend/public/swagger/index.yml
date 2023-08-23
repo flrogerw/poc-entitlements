@@ -1,0 +1,30 @@
+openapi: 3.0.3
+info:
+  title: Audacy Entitlement Contract POC
+  description: |-
+    This is a functional representation of Audacy's archetecture team's visions for the proposed Entitlement Service.
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: aarb@audacy.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.11
+externalDocs:
+  description: Find out more about Audacy
+  url: https://audacy.com
+servers:
+  - url: http://localhost:8080
+tags:
+  - name: Members
+    description: Everything about Members
+  - name: Providers
+    description: Everything about Providers
+  - name: Products
+    description: Everything about Products
+  - name: Entitlements
+    description: Everything about Entitlements,
+  - name: Webhooks
+    description: Everything about Webhooks
+   
+   

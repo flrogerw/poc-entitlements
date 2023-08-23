@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html style="background-color:#090527">
+
+<head>
+  <title>Audacy Subscriptions</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://js.stripe.com/v3/"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script>
+
+    async function createProductSection() {
+      const backendApi = axios.create({
+        baseURL: 'http://localhost:8080',
+        timeout: 5000,
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      const products = await backendApi.get('/products?entitlements=true');
+      const productLoop = products.data;
+      const tree = document.createDocumentFragment();
+      productLoop.forEach((pr) => {
+        if (pr.is_active && !pr.is_internal) {
+          const section = document.createElement("section");
+          section.setAttribute("class", "checkout-section");
+          const product = document.createElement("div");
+          product.setAttribute("class", "product");
+          const description = document.createElement("div");
+          description.setAttribute("class", "description");
+          const h2 = document.createElement("h2");
+          console.log(product.name);
+          h2.appendChild(document.createTextNode(pr.name));
+          description.appendChild(h2);
+          const h5 = document.createElement("h5");
+          h5.appendChild(document.createTextNode(`${pr.price} / month`));
+          description.appendChild(h5);
+          const des = document.createElement("div");
+          des.style.cssText = 'padding-left: 10px;padding-right:10px';
+          des.appendChild(document.createTextNode(pr.description));
+          description.appendChild(des);
+          const h4 = document.createElement("h4");
+          h4.appendChild(document.createTextNode('Includes'));
+          h4.style.cssText = 'margin:3px';
+          description.appendChild(h4);
+          const includes = document.createElement("div");
+          includes.style.cssText = 'height: 100px; overflow: scroll';
+          const ul = document.createElement("ul");
+          ul.style.cssText = 'padding:0px';
+          pr.entitlements.forEach((e) => {
+            let li = document.createElement("li");
+            li.style.cssText = 'font-size:12px;padding:3px';
+            li.appendChild(document.createTextNode(e.name));
+            ul.appendChild(li);
+          });
+          includes.appendChild(ul);
+          description.appendChild(includes);
+          product.appendChild(description);
+          section.appendChild(product);
+          const form = document.createElement("form");
+          form.setAttribute("method", "POST");
+          form.setAttribute("action", "/create-checkout-session");
+          const input = document.createElement("input");
+          input.setAttribute("type", "hidden");
+          input.setAttribute("name", "product");
+          input.setAttribute("value", pr.payment_id);
+          const button = document.createElement("button");
+          button.setAttribute("class", "checkout-and-portal-button");
+          button.appendChild(document.createTextNode("Subscribe"));
+          button.setAttribute("type", "submit");
+          form.appendChild(input);
+          form.appendChild(button);
+          section.appendChild(form);
+          tree.appendChild(section);
+        }
+      })
+      document.getElementById("productsDiv").appendChild(tree);
+    };
+
+    createProductSection();
+  </script>
+</head>
+
+<body>
+  <table width="100%" style="margin-top: 68px;">
+    <tr>
+      <td width="20%" style="vertical-align: top;">
+        <img width="200" src="AUD_BIG.png">
+        <div class="css-76iiez" style="opacity: 1;">
+          <div>
+            <div class="css-dlmuzj">
+              <nav aria-label="Main" class="css-1omg6ht">
+                <ul class="css-10y56or">
+                  <li><a class="css-v1pgas" href="/subscriptions-some.html"><span aria-hidden="true" class="css-b48rip"
+                        style="width: 20px; height: 20px;"></span><span>Off Load Some</span></a></li>
+                  <li><a class="css-v1pgas" href="/subscriptions-all.html"><span aria-hidden="true" class="css-b48rip"
+                        style="width: 20px; height: 20px;"></span><span>Off Load All</span></a></li>
+                  <li><a class="css-v1pgas" href="/recover.html"><span aria-hidden="true" class="css-b48rip"
+                        style="width: 20px; height: 20px;"></span><span>Synchronization</span></a>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </td>
+      <td align="center" id="productsDiv">
+        <h2 style="color: white">Client Re-Directed to Stripe for Payment</h2>
+      </td>
+    </tr>
+  </table>
+</body>
+
+</html>

@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en" style="background-color:#090527">
+
+<head>
+    <link rel="preload" href="https://audacy.com/assets-a2/fonts/MaisonNeueExtendedWEB-Bold.woff2" as="font" crossorigin="">
+    <link rel="preload" href="https://audacy.com/assets-a2/fonts/MaisonNeueExtendedWEB-Demi.woff2" as="font" crossorigin="">
+    <link rel="preload" href="https://audacy.com/assets-a2/fonts/MaisonNeueWEB-Bold.woff2" as="font" crossorigin="">
+    <link rel="preload" href="https://audacy.com/assets-a2/fonts/MaisonNeueWEB-Book.woff2" as="font" crossorigin="">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="google-site-verification" content="f7jJ03UDzNxCyWQleLah7tUTVC90WPxW82qi7mPRRbU">
+    <script defer="defer" src="https://audacy.com/assets-a2/commons-main-index.jsc732b6f45e6d092fd9ae.js"></script>
+    <script defer="defer" src="https://audacy.com/assets-a2/commons-main-index.mjs0cbf9e7fe253d948bc6a.js"></script>
+    <script defer="defer" src="https://audacy.com/assets-a2/commons-main-utils.jsae32cef7b4d3b2b1835a.js"></script>
+    <script defer="defer" src="https://audacy.com/assets-a2/commons-main-index.esm.js8e6590ff1257bebb7463.js"></script>
+    <script defer="defer" src="https://audacy.com/assets-a2/commons-main-i18next.js468e59ca72134762357e.js"></script>
+    <script defer="defer" src="https://audacy.com/assets-a2/commons-main-zoom.jsf52200a25c9ff9e9ab27.js"></script>
+    <script defer="defer" src="https://audacy.com/assets-a2/commons-main-index.esm.mjs200722a954c3c15902ac.js"></script>
+    <script defer="defer" src="https://audacy.com/assets-a2/commons-main-create-projection-node.mjs8e97c22259e36efed6fa.js"></script>
+    <script defer="defer" src="https://audacy.com/assets-a2/commons-main-VisualElementDragControls.mjs3c7b317a956434fc60f5.js"></script>
+    <script defer="defer" src="https://audacy.com/assets-a2/commons-main-dom7.esm.js3ed3e872c28d1e6887d6.js"></script>
+    <script defer="defer" src="https://audacy.com/assets-a2/commons-main-iam-css.js0015a2749505918f9785.js"></script>
+    <script defer="defer" src="https://audacy.com/assets-a2/commons-main-URI.jsf093329c37d3f11e586f.js"></script>
+    <script defer="defer" src="https://audacy.com/assets-a2/commons-main-runtime.js1bacb000be660814eca4.js"></script>
+    <script defer="defer" src="https://audacy.com/assets-a2/commons-main-redux.jsdfe22225d2a51f844fb2.js"></script>
+    <script defer="defer" src="https://audacy.com/assets-a2/commons-main-react-dom.production.min.js67627fa115ce5fa674da.js"></script>
+    <script defer="defer" src="https://audacy.com/assets-a2/commons-main-pubnub.min.js3d67fa9601467e9002a7.js"></script>
+    <script defer="defer" src="https://audacy.com/assets-a2/commons-main-polished.esm.jsdf6197d5714b21643a9b.js"></script>
+    <script defer="defer" src="https://audacy.com/assets-a2/commons-main-lodash.jscb0e8b5d0464a2802715.js"></script>
+    <script defer="defer" src="https://audacy.com/assets-a2/commons-main-linkify.module.jsde6ff0f876539e8ae550.js"></script>
+    <script defer="defer" src="https://audacy.com/assets-a2/commons-main-linkify-html.module.js537ff5cfe19484879d5b.js"></script>
+    <script defer="defer" src="https://audacy.com/assets-a2/commons-main-named-references.js0d92ab39b14ae48fb852.js"></script>
+    <script defer="defer" src="https://audacy.com/assets-a2/commons-main-hls.js11058abe557c3af02032.js"></script>
+    <script defer="defer" src="https://audacy.com/assets-a2/commons-main-focus-trap.esm.jsf70c0596b2571fbcafe8.js"></script>
+    <script defer="defer" src="https://audacy.com/assets-a2/commons-main-purify.jsad9b4c0e241ef0a08593.js"></script>
+    <script defer="defer" src="https://audacy.com/assets-a2/commons-main-build.min.js38dd681614f2996cedd7.js"></script>
+    <script defer="defer" src="https://audacy.com/assets-a2/commons-main-deviceHelpers.js26faff5240e74a92b51e.js"></script>
+    <script defer="defer" src="https://audacy.com/assets-a2/commons-main-RTCPeer.js0c59b5db7a9e5c0d5999.js"></script>
+    <script defer="defer" src="https://audacy.com/assets-a2/commons-main-BaseConnection.jsf25f179d12aaf446ff92.js"></script>
+    <script defer="defer" src="https://audacy.com/assets-a2/commons-main-redux-saga-core.esm.js08e71e497b72acdbc18a.js"></script>
+    <script defer="defer" src="https://audacy.com/assets-a2/commons-main-reach-listbox.esm.js5e249011fb2f3b4ab9b8.js"></script>
+    <script defer="defer" src="https://audacy.com/assets-a2/commons-main-core.esm.jsbebf69a83d6f59d91efd.js"></script>
+    <script defer="defer" src="https://audacy.com/assets-a2/commons-main-deflateWorker.js8ffd78324ffd5c28c651.js"></script>
+    <script defer="defer" src="https://audacy.com/assets-a2/commons-main-vast-client.min.jsb4c443187e029cd273e3.js"></script>
+    <script defer="defer" src="https://audacy.com/assets-a2/mainb6a90e3ab768980aeedd.js"></script>
+</head>
+
+<body><noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+    <div id="portal"></div>
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0
+        }
+
+        @-webkit-keyframes loading-upper {
+            0% {
+                opacity: 1;
+                -webkit-transform: scaleY(0);
+                transform: scaleY(0)
+            }
+
+            12.5% {
+                -webkit-transform: scaleY(20);
+                transform: scaleY(20)
+            }
+
+            25%,
+            50% {
+                -webkit-transform: scaleY(7);
+                transform: scaleY(7)
+            }
+
+            62.5% {
+                -webkit-transform: scaleY(25);
+                transform: scaleY(25)
+            }
+
+            75%,
+            87.5% {
+                opacity: 1;
+                -webkit-transform: scaleY(7);
+                transform: scaleY(7)
+            }
+
+            100%,
+            87.51% {
+                opacity: 0;
+                -webkit-transform: scaleY(0);
+                transform: scaleY(0)
+            }
+        }
+
+        @keyframes loading-upper {
+            0% {
+                opacity: 1;
+                -webkit-transform: scaleY(0);
+                transform: scaleY(0)
+            }
+
+            12.5% {
+                -webkit-transform: scaleY(20);
+                transform: scaleY(20)
+            }
+
+            25%,
+            50% {
+                -webkit-transform: scaleY(7);
+                transform: scaleY(7)
+            }
+
+            62.5% {
+                -webkit-transform: scaleY(25);
+                transform: scaleY(25)
+            }
+
+            75%,
+            87.5% {
+                opacity: 1;
+                -webkit-transform: scaleY(7);
+                transform: scaleY(7)
+            }
+
+            100%,
+            87.51% {
+                opacity: 0;
+                -webkit-transform: scaleY(0);
+                transform: scaleY(0)
+            }
+        }
+
+        @-webkit-keyframes loading-lower {
+
+            0%,
+            25% {
+                opacity: 1;
+                -webkit-transform: scaleY(0);
+                transform: scaleY(0)
+            }
+
+            25.1% {
+                -webkit-transform: scaleY(7);
+                transform: scaleY(7)
+            }
+
+            37.5% {
+                -webkit-transform: scaleY(25);
+                transform: scaleY(25)
+            }
+
+            50%,
+            75% {
+                -webkit-transform: scaleY(7);
+                transform: scaleY(7)
+            }
+
+            81% {
+                -webkit-transform: scaleY(15);
+                transform: scaleY(15)
+            }
+
+            87.5% {
+                -webkit-transform: scaleY(7);
+                transform: scaleY(7)
+            }
+
+            99.9% {
+                opacity: 1;
+                -webkit-transform: scaleY(0);
+                transform: scaleY(0)
+            }
+
+            100% {
+                opacity: 0
+            }
+        }
+
+        @keyframes loading-lower {
+
+            0%,
+            25% {
+                opacity: 1;
+                -webkit-transform: scaleY(0);
+                transform: scaleY(0)
+            }
+
+            25.1% {
+                -webkit-transform: scaleY(7);
+                transform: scaleY(7)
+            }
+
+            37.5% {
+                -webkit-transform: scaleY(25);
+                transform: scaleY(25)
+            }
+
+            50%,
+            75% {
+                -webkit-transform: scaleY(7);
+                transform: scaleY(7)
+            }
+
+            81% {
+                -webkit-transform: scaleY(15);
+                transform: scaleY(15)
+            }
+
+            87.5% {
+                -webkit-transform: scaleY(7);
+                transform: scaleY(7)
+            }
+
+            99.9% {
+                opacity: 1;
+                -webkit-transform: scaleY(0);
+                transform: scaleY(0)
+            }
+
+            100% {
+                opacity: 0
+            }
+        }
+
+        .loading {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center
+        }
+
+        .loading__inner {
+            display: flex;
+            justify-content: space-between;
+            flex-direction: row-reverse;
+            height: 50px;
+            width: 49px
+        }
+
+        .loading__bar-container {
+            position: relative;
+            width: 7px
+        }
+
+        .loading__bar {
+            background-color: #fff;
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            opacity: 0
+        }
+
+        .loading__bar--upper {
+            bottom: 25px;
+            -webkit-transform-origin: center bottom;
+            transform-origin: center bottom;
+            -webkit-animation-name: loading-upper;
+            animation-name: loading-upper;
+            -webkit-animation-duration: 2.8s;
+            animation-duration: 2.8s;
+            -webkit-animation-iteration-count: infinite;
+            animation-iteration-count: infinite
+        }
+
+        .loading__bar--lower {
+            top: 18px;
+            -webkit-transform-origin: center top;
+            transform-origin: center top;
+            -webkit-animation-name: loading-lower;
+            animation-name: loading-lower;
+            -webkit-animation-duration: 2.8s;
+            animation-duration: 2.8s;
+            -webkit-animation-iteration-count: infinite;
+            animation-iteration-count: infinite
+        }
+
+        .loading__bar-container:first-child div {
+            -webkit-animation-delay: -2.8s;
+            animation-delay: -2.8s
+        }
+
+        .loading__bar-container:nth-child(2) div {
+            -webkit-animation-delay: -2.92s;
+            animation-delay: -2.92s
+        }
+
+        .loading__bar-container:nth-child(3) div {
+            -webkit-animation-delay: -3.04s;
+            animation-delay: -3.04s
+        }
+
+        .loading__bar-container:nth-child(4) div {
+            -webkit-animation-delay: -3.16s;
+            animation-delay: -3.16s
+        }
+
+        @media (prefers-reduced-motion:reduce) {
+
+            .loading__bar--lower,
+            .loading__bar--upper {
+                -webkit-animation-duration: 8.4s;
+                animation-duration: 8.4s
+            }
+        }
+    </style>
+    <div class="loading" id="initial-loading">
+        <div class="loading__inner">
+            <div class="loading__bar-container">
+                <div class="loading__bar loading__bar--upper"></div>
+                <div class="loading__bar loading__bar--lower"></div>
+            </div>
+            <div class="loading__bar-container">
+                <div class="loading__bar loading__bar--upper"></div>
+                <div class="loading__bar loading__bar--lower"></div>
+            </div>
+            <div class="loading__bar-container">
+                <div class="loading__bar loading__bar--upper"></div>
+                <div class="loading__bar loading__bar--lower"></div>
+            </div>
+            <div class="loading__bar-container">
+                <div class="loading__bar loading__bar--upper"></div>
+                <div class="loading__bar loading__bar--lower"></div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

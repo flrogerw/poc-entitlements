@@ -1,0 +1,177 @@
+paths:
+  /providers:
+    get:
+      tags:
+        - Providers
+      summary: Get a list of Providers from the Entitlement Service.
+      description: Returns a list of Providers without the associated Entitlements.
+      operationId: getProviders
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/definitions/Provider"
+        "400":
+          description: Invalid credentials supplied
+        "404":
+          description: Resource not found
+        "405":
+          description: Validation exception
+    post:
+      tags:
+        - Providers
+      summary: Post a new Providers to the Entitlements System.
+      description: Creates a new Provider within the Entitlement Service.
+      operationId: postProvider
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/definitions/Provider"
+        "400":
+          description: Invalid credentials supplied
+        "404":
+          description: Resource not found
+        "405":
+          description: Validation exception
+
+  /providers/{id}:
+    get:
+      tags:
+        - Providers
+      summary: Finds Provider by ID
+      description: Returns all of a Provider's information based on the Provider ID.
+      operationId: findProviderById
+      parameters:
+        - name: id
+          in: path
+          description: Unique integer ID for the Provider within the Entitlement Service.
+          required: true
+          schema:
+            type: integer
+            minimum: 0
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/ProviderAll"
+        "400":
+          description: Invalid status value
+        "404":
+          description: Provider not found
+    put:
+      tags:
+        - Providers
+      summary: Update a Provider by ID
+      description: Updates a Provider's information based on their Provider ID.
+      operationId: putProviderById
+      parameters:
+        - name: id
+          in: path
+          description: Unique ID for the Provider within the Entitlement Service.
+          required: true
+          schema:
+            type: integer
+            minimum: 0
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/ProviderAll"
+        "400":
+          description: Invalid status value
+        "404":
+          description: Provider not found
+    delete:
+      tags:
+        - Providers
+      summary: Delete a Provider by ID
+      description: Sets a Provider's to in active and sets the end date based on the Provider ID.
+      operationId: deleteProviderById
+      parameters:
+        - name: id
+          in: path
+          description: Unique integer ID for the Provider.
+          required: true
+          schema:
+            type: integer
+            minimum: 0
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/definitions/Provider"
+        "400":
+          description: Invalid status value
+        "404":
+          description: Provider not found
+definitions:
+  ProviderAll:
+    allOf:
+      - $ref: '#/definitions/Product'
+      - type: object
+        properties:
+          entitlements:
+            description: An array of associated Entitlements.
+            type: array
+            items:
+              $ref: "#/definitions/Entitlement" 
+  Provider:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+        description: Unique integer ID for the Provider within the Entitlement Service.
+        example: 10
+      api_key:
+        type: string
+        example: user_O3FvulwP4Ce2R9
+        description: Unique API token for web access.
+      namespace_key:
+        type: string
+        format: uuid
+        description: A UUID assigned to each Provider.
+        maximum: 40
+        pattern: '[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}'
+        example: 1ed55455-d561-52ea-a82c-22b83f7f1155
+      name:
+        type: string
+        maximum: 256
+        minimum: 4
+        description: Friendly name for the Provider.
+        example: AmperWave Streaming Service
+      description:
+        type: string
+        maximum: 256
+        description: A friendly description of the Provider and the service(s) they offer.
+        example: Here is where to put a brief description of the Provider and the service they offer.
+      is_active:
+        type: boolean
+        description: A quick way to determine if a Provider is active within the Entitlement Service.
+      start_date:
+        type: string
+        format: date-time
+        description: The date the Provider was added to the Entitlement Service.
+        example: 2023-08-10
+        nullable: false
+      end_date:
+        type: string
+        format: date-time
+        description: The date the Provider was 'removed' from the Entitlement Service.
+        example: 2024-08-10
+        nullable: true
