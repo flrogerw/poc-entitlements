@@ -12,8 +12,8 @@ exports.up = (knex) => knex.schema.createTable('products', (table) => {
   table.float('price', 2);
   table.boolean('is_active').defaultTo(true);
   table.boolean('is_internal').defaultTo(false);
-  table.timestamp('start_date').defaultTo(knex.fn.now());
-  table.timestamp('end_date');
+  table.date('start_date').defaultTo(knex.fn.now());
+  table.date('end_date');
 })
   .raw('ALTER SEQUENCE products_id_seq RESTART WITH 1000')
 
@@ -24,8 +24,8 @@ exports.up = (knex) => knex.schema.createTable('products', (table) => {
     table.string('description', 256);
     table.string('summary', 256);
     table.boolean('is_active').defaultTo(true);
-    table.timestamp('start_date').defaultTo(knex.fn.now());
-    table.timestamp('end_date');
+    table.date('start_date').defaultTo(knex.fn.now());
+    table.date('end_date');
   })
 
   .raw('ALTER SEQUENCE entitlements_id_seq RESTART WITH 1000')
@@ -35,11 +35,11 @@ exports.up = (knex) => knex.schema.createTable('products', (table) => {
     table.string('payment_id', 64).unique();
     table.string('payment_session_id', 64).unique();
     table.string('payment_processor', 32);
-    table.string('name', 64).notNullable();
+    table.string('name', 64);
     table.uuid('unique_identifier').notNullable().unique();
     table.boolean('is_active').defaultTo(true);
-    table.timestamp('start_date').defaultTo(knex.fn.now());
-    table.timestamp('end_date');
+    table.date('start_date').defaultTo(knex.fn.now());
+    table.date('end_date');
   })
 
   .raw('ALTER SEQUENCE subscribers_id_seq RESTART WITH 1000')
@@ -51,8 +51,8 @@ exports.up = (knex) => knex.schema.createTable('products', (table) => {
     table.string('name', 64).unique().notNullable();
     table.string('description', 256);
     table.boolean('is_active').defaultTo(true);
-    table.timestamp('start_date').defaultTo(knex.fn.now());
-    table.timestamp('end_date');
+    table.date('start_date').defaultTo(knex.fn.now());
+    table.date('end_date');
   })
 
   .raw('ALTER SEQUENCE providers_id_seq RESTART WITH 1000')
@@ -79,8 +79,8 @@ exports.up = (knex) => knex.schema.createTable('products', (table) => {
       .notNullable()
       .references('id')
       .inTable('products');
-    table.timestamp('start_date').defaultTo(knex.fn.now());
-    table.timestamp('end_date');
+    table.date('start_date').defaultTo(knex.fn.now());
+    table.date('end_date');
   })
 
   .createTable('subscriber_to_entitlements', (table) => {
@@ -92,8 +92,8 @@ exports.up = (knex) => knex.schema.createTable('products', (table) => {
       .references('id')
       .inTable('entitlements');
     table.boolean('is_active').defaultTo(true);
-    table.timestamp('start_date').defaultTo(knex.fn.now());
-    table.timestamp('end_date');
+    table.date('start_date').defaultTo(knex.fn.now());
+    table.date('end_date');
   })
 
   .createTable('provider_to_entitlements', (table) => {

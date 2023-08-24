@@ -30,6 +30,31 @@ const namespaceUUIDs = {
   },
 };
 
+const getProviders = async (id) => {
+  return await knex.select(knex.raw("row_to_json(r) as providers"))
+    .from('providers as r')
+    .leftJoin('provider_to_entitlements as re', 're.provider_id', 'r.id')
+    .where('re.entitlement_id', id)
+    .then((providers) => {
+      return providers.map(p => p.providers);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}
+
+const getProducts = async (id) => {
+  return await knex.select(knex.raw("row_to_json(r) as products"))
+    .from('products as r')
+    .rightJoin('product_to_entitlements as re', 're.product_id', 'r.id')
+    .where('re.entitlement_id', id)
+    .then((products) => {
+      return products.map(p => p.products);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}
 
 // Function to fetch user entitlements from the database
 function getEntitlements(id, providerKey) {
@@ -62,40 +87,10 @@ const getAll = (req, res) => {
     })
 }
 
-const getProviders = async (id) => {
-  return await knex.select(knex.raw("row_to_json(r) as providers"))
-    .from('providers as r')
-    .leftJoin('provider_to_entitlements as re', 're.provider_id', 'r.id')
-    .where('re.entitlement_id', id)
-    .then((providers) => {
-      return providers.map(p => p.providers);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-}
-
-const getProducts = async (id) => {
-  return await knex.select(knex.raw("row_to_json(r) as products"))
-    .from('products as r')
-    .rightJoin('product_to_entitlements as re', 're.product_id', 'r.id')
-    .where('re.entitlement_id', id)
-    .then((products) => {
-      return products.map(p => p.products);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-}
 
 const getOne = async (req, res) => {
-  knex
-    .select(knex.raw('e.*, array_agg(row_to_json(pr.*)) as products'))
-    .from('entitlements as e')
-    .leftJoin('product_to_entitlements as pe', 'pe.entitlement_id', 'e.id')
-    .leftJoin('products as pr', 'pr.id', 'pe.product_id')
-    .groupBy('e.name', 'e.id')
-    .where('e.id', req.params.id)
+  knex('entitlements')
+    .where('id', req.params.id)
     .first()
     .then(async (entitlement) => {
       if (!entitlement) {

@@ -1,6 +1,7 @@
 // This is your test secret API key.
 const stripe = require('stripe')(process.env.STRIPE_TOKEN);
 const axios = require('axios');
+const { v4: uuidv4 } = require('uuid');
 
 const YOUR_DOMAIN = 'http://localhost:8082';
 
@@ -18,7 +19,7 @@ const paymentApi = axios.create({
 });
 
 
-async function postToWebhooks(postObj) {
+async function postToEntitlements(postObj) {
     return await backendApi.post('/webhooks', postObj)
         .then((response) => {
             return response;
@@ -73,8 +74,8 @@ const checkoutSession = async (req, res) => {
         product: req.body.product,
         expand: ['data.product'],
     });
-
-    const audacyId = `audacy_id-${Math.random() * 1000}`
+    // This will be replaced with an existing UUID from Identity.
+    const unique_identifier = uuidv4();
 
     const session = await stripe.checkout.sessions.create({
         billing_address_collection: 'auto',
@@ -87,12 +88,12 @@ const checkoutSession = async (req, res) => {
         ],
         subscription_data: {
             metadata: {
-                audacy_id: audacyId,
-                audacy_product_id: 'sub_001'
+                unique_identifier,
+                product_id: req.body.id
             }
         },
 
-        client_reference_id: audacyId,
+        client_reference_id: unique_identifier,
         mode: 'subscription',
         success_url: `${YOUR_DOMAIN}/success.html?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${YOUR_DOMAIN}/cancel.html`,
@@ -115,54 +116,43 @@ const portalSession = async (req, res) => {
 };
 
 const webhook = async (request, response) => {
-        let event = request.body;
-        const endpointSecret = "whsec_7ac93e622ed6842644a9bdad7fb8754cafe0dfafa88437c5b40f240dedecd03d";
-        if (endpointSecret) {
-            const signature = request.headers['stripe-signature'];
-            try {
-                event = stripe.webhooks.constructEvent(
-                    request.body,
-                    signature,
-                    endpointSecret
-                );
-            } catch (err) {
-                console.log(`webhook signature verification failed.`, err.message);
-                return response.sendStatus(400);
-            }
+    let event = request.body;
+    if (process.env.STRIPE_ENDPOINT_SECRET) {
+        const signature = request.headers['stripe-signature'];
+        try {
+            event = stripe.webhooks.constructEvent(
+                request.body,
+                signature,
+                process.env.STRIPE_ENDPOINT_SECRET
+            );
+        } catch (err) {
+            console.log(`webhook signature verification failed.`, err.message);
+            return response.sendStatus(400);
         }
+    }
+    response.send();
 
-        const subscription = event.data.object;
-        const { status, customer, plan, metadata, client_reference_id } = subscription;
-        const postObj = { paymentProcessor: 'Stripe' };
+    const subscription = event.data.object;
+    const { status, customer, plan, metadata, client_reference_id } = subscription;
+    const eventTypes = event.type.split('.');
+    await postToEntitlements({
+        processor: process.env.PAYMENT_PROCESSOR,
+        event: eventTypes.pop(),
+        type: eventTypes.pop(),
+        paymentId: customer,
+        unique_identifier: client_reference_id || null,
+        status: status,
+        product: (plan && plan.product) ? plan.product : null,
+        metadata: metadata || null,
+    })
+        .then((response) => {
+            // console.log(response.data);
+        })
+        .catch((err) => {
+            throw err;
+        });
 
-        switch (event.type) {
-            case 'customer.subscription.trial_will_end':
-            case 'customer.subscription.deleted':
-            case 'customer.subscription.created':
-            case 'customer.subscription.updated':
-            case 'checkout.session.completed':
-                postObj.event = event.type.substring(event.type.lastIndexOf('.') + 1);
-                postObj.paymentId = customer;
-                postObj.unique_identifier = client_reference_id || null;
-                postObj.status = status;
-                postObj.product = (plan && plan.product) ? plan.product : null;
-                postObj.metadata = metadata || null;
-                break;
-            default:
 
-                console.log(`${event.type} is irrelevent to our systems.\n`);
-        }
-        response.send();
-        if (postObj.paymentId) {
-            await postToWebhooks(postObj)
-                .then((response) => {
-                    console.log(response.data);
-                })
-                .catch((err) => {
-                    throw err;
-                });
-        }
-
-    };
+};
 
 module.exports = { getRecovery, createIntent, checkoutSession, portalSession, webhook };

@@ -65,7 +65,7 @@ export const SubscriberEdit = () => (
                     <TextField source="is_active" label="Client Enabled" />
                     <TextField source="start_date" />
                     <TextField source="end_date" />   
-                    <TextField source="e_is_active" label="Entitlement Active" />
+                    <TextField source="is_active" label="Entitlement Active" />
                 </Datagrid>
             </ArrayField>
             <ReferenceArrayInput source="newEntitlements" reference="entitlements" >
@@ -83,7 +83,7 @@ export const SubscriberCreate = () => (
             <DateInput source="start_date" />
             <DateInput source="end_date" />
             <h3>Enable Products</ h3>
-            <ReferenceArrayInput source="id" reference="products" >
+            <ReferenceArrayInput source="newProducts" reference="products" >
                 <SelectArrayInput label="Products" />
             </ReferenceArrayInput>
             <h3>Enable Entitlements</ h3>

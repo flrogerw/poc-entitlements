@@ -17,8 +17,20 @@ const paymentAdapter = axios.create({
 const getProductsEntitlements = async (newProductsArray) => {
   return await knex.select(knex.raw("array_agg(DISTINCT entitlement_id) as entitlements"))
     .from('product_to_entitlements')
-    //.groupBy('entitlement_id')
     .whereRaw('product_id IN (?)', newProductsArray.toString());
+}
+
+const getEntitlements = async (id) => {
+  return await knex.select(knex.raw("row_to_json(e) as entitlements"))
+    .from('entitlements as e')
+    .innerJoin('product_to_entitlements as pe', 'pe.entitlement_id', 'e.id')
+    .where('pe.product_id', id)
+    .then((entitlements) => {
+      return entitlements.map(p => p.entitlements);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 }
 
 const getAll = async (req, res) => {
@@ -27,15 +39,18 @@ const getAll = async (req, res) => {
     .orderBy('id')
     .modify((queryBuilder) => {
       if (req.query.entitlements) {
+        // This will crap out if a product has no entitlements.  Need to modify like the other getEntitlements.
         queryBuilder.select(knex.raw("pr.*, array_agg(json_build_object('name', e.name, 'description', e.description)) as entitlements"))
-        queryBuilder.leftJoin('product_to_entitlements as pe', 'pe.product_id', 'pr.id')
-        queryBuilder.leftJoin('entitlements as e', 'pe.entitlement_id', 'e.id')
+        queryBuilder.innerJoin('product_to_entitlements as pe', 'pe.product_id', 'pr.id')
+        queryBuilder.innerJoin('entitlements as e', 'pe.entitlement_id', 'e.id')
         queryBuilder.groupBy("pr.id")
       }
     })
     .then((result) => {
       res.header('Access-Control-Expose-Headers', 'Content-Range');
       res.header('Content-Range', result.length);
+      if (req.query.entitlements) {
+      }
       res.json(result);
     })
     .catch((error) => {
@@ -43,24 +58,19 @@ const getAll = async (req, res) => {
     });
 }
 
+
 const getOne = async (req, res) => {
-
-  const getEntitlements = await knex.select(knex.raw("array_agg(json_build_object('id', e.id, 'name', e.name, 'is_active', e.is_active, 'start_date', e.start_date::date, 'end_date', e.end_date::date)) as entitlements"))
-    .from('entitlements as e')
-    .leftJoin('product_to_entitlements as pe', 'pe.entitlement_id', 'e.id')
-    .where('pe.product_id', req.params.id).first();
-
   return knex
     .select('*')
     .from('products as pr')
     .where('pr.id', req.params.id)
     .first()
-    .then((result) => {
+    .then(async (result) => {
       if (!result) {
         res.status(404);
         res.json({ status: 404, message: 'Not Found' });
       }
-      result.entitlements = getEntitlements.entitlements;
+      result.entitlements = await getEntitlements(req.params.id);
       res.json(result);
     })
     .catch((error) => {

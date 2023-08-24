@@ -1,5 +1,92 @@
 const knex = require('knex')(require('../knex/knexfile'));
 const Products = require('./products');
+const { v4: uuidv4 } = require('uuid');
+// Fixes dates in knex/pg
+const { types } = require('pg');
+const DATE_OID = 1082;
+const parseDate = (value) => value;
+types.setTypeParser(DATE_OID, parseDate);
+
+const getEntitlements = async (unique_identifier) => {
+  return await knex.select('se.end_date as client_end_date', knex.raw("row_to_json(e) as entitlements"))
+    .from('entitlements as e')
+    .innerJoin('subscriber_to_entitlements as se', 'se.entitlement_id', 'e.id')
+    .where(`se.unique_identifier`, unique_identifier)
+    .then((entitlements) => {
+      return entitlements.map(p => {
+        p.entitlements.end_date = p.client_end_date;
+        return p.entitlements;
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}
+
+const getProducts = async (unique_identifier) => {
+  return await knex.select('sp.end_date as client_end_date', knex.raw("row_to_json(pr) as products"))
+    .from('products as pr')
+    .innerJoin('subscriber_to_products as sp', 'sp.product_id', 'pr.id')
+    .where('sp.unique_identifier',unique_identifier)
+    .then((products) => {
+      return products.map(p => {
+        p.products.end_date = p.client_end_date;
+        return p.products;
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}
+
+const createSubscriber = (subscriberObj) => {
+  let { id, end_date, newEntitlements, newProducts, ...subscriberCreate } = subscriberObj;
+  newEntitlements ||= [];
+  newProducts ||= [];
+  subscriberCreate.unique_identifier ||= uuidv4();
+  return knex('subscribers')
+    .insert(subscriberCreate)
+    .returning('*')
+    .then(async (result) => {
+      if (!result) {
+        throw ({ status: 404, message: 'Not Found' });
+      }
+      const subscriber = result[0];
+      await addProductEntitlements(newProducts, newEntitlements, subscriber.unique_identifier, end_date)
+      return subscriber;
+    })
+    .catch((error) => {
+      throw  { status: 500, message: error.toString() };
+    })
+}
+
+
+const addProductEntitlements = async (newProducts, newEntitlements, unique_identifier, endDate = null) => {
+
+  if (newProducts) {
+    const pInsert = []
+    newProducts.forEach((p) => { pInsert.push({ product_id: p, unique_identifier, end_date: endDate }) })
+    await knex('subscriber_to_products')
+      .insert(pInsert)
+      .onConflict(['unique_identifier', 'product_id'])
+      .merge()
+      .catch((err) => { console.log(err) });
+    const newProductsEntitlements = await Products.getProductsEntitlements(newProducts);
+    newEntitlements = [...new Set([...newEntitlements, ...newProductsEntitlements[0].entitlements])]
+  }
+
+  if (newEntitlements) {
+    const eInsert = []
+    newEntitlements.forEach((e) => {
+      eInsert.push({ entitlement_id: e, unique_identifier: unique_identifier, end_date: endDate })
+    })
+    await knex('subscriber_to_entitlements')
+      .insert(eInsert)
+      .onConflict(['unique_identifier', 'entitlement_id'])
+      .merge()
+      .catch((err) => { console.log(err) });
+  }
+}
 
 const getAll = (req, res) => {
   return knex('subscribers')
@@ -22,19 +109,8 @@ const getOne = async (req, res) => {
         res.status(404);
         res.json({ status: 404, message: 'Subscriber Not Found' });
       }
-
-      const getEntitlements = await knex.select(knex.raw("array_agg(json_build_object('id', e.id,'name', e.name, 'e_is_active', e.is_active, 'is_active', se.is_active, 'start_date', se.start_date::date, 'end_date', se.end_date::date)) as entitlements"))
-        .from('entitlements as e')
-        .innerJoin('subscriber_to_entitlements as se', 'se.entitlement_id', 'e.id')
-        .where('se.unique_identifier', subscriber.unique_identifier).first();
-      subscriber.entitlements = getEntitlements.entitlements;
-
-      const getProducts = await knex.select(knex.raw("array_agg(json_build_object('id', pr.id,'name', pr.name, 'is_active', pr.is_active, 'start_date', sp.start_date::date, 'end_date', sp.end_date::date)) as products"))
-        .from('products as pr')
-        .innerJoin('subscriber_to_products as sp', 'sp.product_id', 'pr.id')
-        .where('sp.unique_identifier', subscriber.unique_identifier).first();
-      subscriber.products = getProducts.products;
-
+      subscriber.entitlements = await getEntitlements(subscriber.unique_identifier);
+      subscriber.products = await getProducts(subscriber.unique_identifier);
       res.json(subscriber);
     })
     .catch((error) => {
@@ -42,23 +118,17 @@ const getOne = async (req, res) => {
     })
 }
 
-const create = (req, res) => {
-  return knex('subscribers')
-    .insert(req.body)
-    .returning('*')
-    .then((result) => {
-      if (!result) {
-        res.status(404);
-        res.json({ status: 404, message: 'Not Found' });
-      }
-      res.json(result[0]);
-    })
-    .catch((error) => {
-      res.status(500);
-      res.json({ status: res.statusCode, message: error.toString() });
-    })
-}
 
+const create = async (req, res) => {
+  try {
+    const subscriber = await createSubscriber(req.body);
+    res.json(subscriber);
+  } catch (error) {
+    console.log(error);
+    res.status(error.status);
+    res.json({ status: error.status, message: error.toString() });
+  }
+}
 
 
 const update = (req, res) => {
@@ -81,30 +151,7 @@ const update = (req, res) => {
         res.status(404);
         res.json({ status: 404, message: 'Not Found' });
       }
-
-      if (newProducts) {
-        const pInsert = []
-        newProducts.forEach((p) => { pInsert.push({ product_id: p, unique_identifier: result[0].unique_identifier }) })
-        await knex('subscriber_to_products')
-          .insert(pInsert)
-          .onConflict(['unique_identifier', 'product_id'])
-          .merge()
-          .catch((err) => { console.log(err) });
-        const newProductsEntitlements = await Products.getProductsEntitlements(newProducts);
-        newEntitlements = [...new Set([...newEntitlements, ...newProductsEntitlements[0].entitlements])]
-      }
-
-      if (newEntitlements) {
-        const eInsert = []
-        newEntitlements.forEach((e) => {
-          eInsert.push({ entitlement_id: e, unique_identifier: result[0].unique_identifier })
-        })
-        await knex('subscriber_to_entitlements')
-          .insert(eInsert)
-          .onConflict(['unique_identifier', 'entitlement_id'])
-          .merge()
-          .catch((err) => { console.log(err) });
-      }
+      await addProductEntitlements(newProducts, newEntitlements, result[0].unique_identifier)
       res.json(result[0]);
     })
     .catch((error) => {
@@ -131,4 +178,4 @@ const setInactive = (req, res) => {
     })
 }
 
-module.exports = { getAll, getOne, create, update, setInactive };
+module.exports = { createSubscriber, getAll, getOne, create, update, setInactive };

@@ -1,5 +1,6 @@
 const knex = require('knex')(require('../knex/knexfile'));
 const redis = require('redis');
+const { v4: uuidv4 } = require('uuid');
 
 const client = redis.createClient({
   socket: {
@@ -21,20 +22,29 @@ const getAll = (req, res) => {
     })
 }
 
+const getEntitlements = async (id) => {
+  return await knex.select(knex.raw("row_to_json(e) as entitlements"))
+    .from('entitlements as e')
+    .innerJoin('provider_to_entitlements as pe', 'pe.entitlement_id', 'e.id')
+    .where('pe.provider_id', id)
+    .then((entitlements) => {
+      return entitlements.map(p => p.entitlements);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}
+
 const getOne = (req, res) => {
-  return knex
-    .select(knex.raw('pr.*, array_agg(row_to_json(t.*)) as entitlements'))
-    .from('providers as pr')
-    .leftJoin('provider_to_entitlements as it', 'it.provider_id', 'pr.id')
-    .leftJoin('entitlements as t', 't.id', 'it.entitlement_id')
-    .groupBy('pr.id', 'pr.name')
-    .where('pr.id', req.params.id)
+  return knex('providers')
+    .where('id', req.params.id)
     .first()
-    .then((result) => {
+    .then(async (result) => {
       if (!result) {
         res.status(404);
         res.json({ status: 404, message: 'Not Found' });
       }
+      result.entitlements = await getEntitlements(req.params.id);
       res.json(result);
     })
     .catch((error) => {
@@ -43,8 +53,11 @@ const getOne = (req, res) => {
 }
 
 const create = (req, res) => {
+  const { ...providerCreate } = req.body;
+  providerCreate.api_key = uuidv4();
+  providerCreate.namespace_key = uuidv4();
   return knex('providers')
-    .insert(req.body)
+    .insert(providerCreate)
     .returning('*')
     .then((result) => {
       if (!result) {
@@ -70,7 +83,7 @@ const update = (req, res) => {
         res.status(404);
         res.json({ status: 404, message: 'Not Found' });
       }
-     let provider = result[0];
+      let provider = result[0];
 
       if (newEntitlements) {
         const eInsert = []

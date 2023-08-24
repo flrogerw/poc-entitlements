@@ -63,11 +63,16 @@
           input.setAttribute("type", "hidden");
           input.setAttribute("name", "product");
           input.setAttribute("value", pr.payment_id);
+          const inputId = document.createElement("input");
+          inputId.setAttribute("type", "hidden");
+          inputId.setAttribute("name", "id");
+          inputId.setAttribute("value", pr.id);
           const button = document.createElement("button");
           button.setAttribute("class", "checkout-and-portal-button");
           button.appendChild(document.createTextNode("Subscribe"));
           button.setAttribute("type", "submit");
           form.appendChild(input);
+          form.appendChild(inputId);
           form.appendChild(button);
           section.appendChild(form);
           tree.appendChild(section);
