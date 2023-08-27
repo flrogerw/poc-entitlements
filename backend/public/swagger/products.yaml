@@ -47,12 +47,12 @@ paths:
       tags:
         - Products
       summary: Finds Product by ID
-      description: Returns a Members information based on their Entitlements ID.
+      description: Returns a Subscribers information based on their Entitlements ID.
       operationId: findProductById
       parameters:
         - name: id
           in: path
-          description: Unique ID for the Member within the Entitlement Service
+          description: Unique ID for the Subscriber within the Entitlement Service
           required: true
           schema:
             type: integer
@@ -67,7 +67,7 @@ paths:
         "400":
           description: Invalid status value
         "404":
-          description: Member not found
+          description: Subscriber not found
     put:
       tags:
         - Products
@@ -77,7 +77,7 @@ paths:
       parameters:
         - name: id
           in: path
-          description: Unique ID for the Member within the Entitlement Service
+          description: Unique ID for the Subscriber within the Entitlement Service
           required: true
           schema:
             type: integer
@@ -92,7 +92,7 @@ paths:
         "400":
           description: Invalid status value
         "404":
-          description: Member not found
+          description: Subscriber not found
     delete:
       tags:
         - Products
@@ -102,7 +102,7 @@ paths:
       parameters:
         - name: id
           in: path
-          description: Unique ID for the Member within the Entitlement Service
+          description: Unique ID for the Subscriber within the Entitlement Service
           required: true
           schema:
             type: integer
@@ -117,7 +117,7 @@ paths:
         "400":
           description: Invalid status value
         "404":
-          description: Member not found     
+          description: Subscriber not found     
 definitions:
   ProductPost:
   ProductAll:

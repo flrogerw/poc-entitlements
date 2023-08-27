@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node server.js",
     "migrations": "knex --knexfile ./knex/knexfile-local.js migrate:latest",
-    "seeds": "knex --knexfile ./knex/knexfile-local.js seed:run"
+    "seeds": "knex --knexfile ./knex/knexfile-local.js seed:run --specific=setup.js",
+    "seeds-mvp": "knex --knexfile ./knex/knexfile-local.js seed:run --specific=mvp.js"
   },
   "keywords": [],
   "author": "",

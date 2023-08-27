@@ -17,7 +17,7 @@ npm install stripe -g
 ~~~
 
 ### Start the Containers
-1. Create a .env file within the Stripe Adpter folder using the included sample for direction.
+1. Create a .env file within the stripe_adapter folder using the included sample for direction.
 
 2. Build the containers
 
@@ -36,6 +36,10 @@ npm run migrations
 ~~~
 npm run seeds
 ~~~
+or this for MVP
+~~~
+npm run seeds-mvp
+~~~
 
 5. Forward Payment Processors Events to localhost.
 
@@ -51,8 +55,16 @@ stripe trigger payment_intent.succeeded
 
 7. Avaiable URLs:
 
-[Sample Audacy Subscription Page](http://localhost:8082/subscriptions-all.html)
+    This is a sample Audacy subscription page that is tied into the backend as well as the payment processor(Stripe)
 
-[Entitlements Administration Panel](http://localhost:5173)
+    [Sample Audacy Subscription Page](http://localhost:8082/subscriptions-all.html)
 
-[API Documentation](http://localhost:8080/api-doc)
+    These two links will take you to the Admin Panel(s) GUI.
+
+    [Entitlements Admin MVP](http://localhost:5174)
+
+    [Entitlements Admin Future Proofed](http://localhost:5173)
+
+    Audacy Entitlement API Contracts.
+    
+    [API Documentation](http://localhost:8080/api-doc)

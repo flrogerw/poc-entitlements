@@ -19,6 +19,11 @@ services:
     build: ./frontend-admin
     ports:
       - '5173:5173'
+  mvp:
+    restart: on-failure
+    build: ./frontend-admin-mvp
+    ports:
+      - '5174:5173'
   db:
     image: postgres:14.1-alpine
     restart: always

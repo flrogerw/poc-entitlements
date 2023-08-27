@@ -162,7 +162,7 @@ definitions:
         example: Add free music and all the benefits.
       is_active:
         type: boolean
-        description: Set an Entitlement as active/in active. This change cascades down to all entitled Members. 
+        description: Set an Entitlement as active/in active. This change cascades down to all entitled Subscribers. 
       start_date:
         type: string
         format: date-time

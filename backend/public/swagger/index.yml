@@ -16,8 +16,8 @@ externalDocs:
 servers:
   - url: http://localhost:8080
 tags:
-  - name: Members
-    description: Everything about Members
+  - name: Subscribers
+    description: Everything about Subscribers
   - name: Providers
     description: Everything about Providers
   - name: Products
