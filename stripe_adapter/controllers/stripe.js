@@ -7,7 +7,7 @@ const YOUR_DOMAIN = process.env.DOMAIN_NAME;
 
 const backendApi = axios.create({
     baseURL: process.env.BACKEND_API,
-    timeout: 1000
+    timeout: 5000
 });
 
 const paymentApi = axios.create({
@@ -15,7 +15,7 @@ const paymentApi = axios.create({
     headers: {
         'Authorization': `Bearer ${process.env.STRIPE_TOKEN}`
     },
-    timeout: 1000
+    timeout: 5000
 });
 
 
