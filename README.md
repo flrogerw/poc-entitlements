@@ -9,23 +9,27 @@ The architecture team's approach prioritized the relationship between a user (Su
 
 ## Running the POC
 
-### Requirements
-The only requirement is the node Stripe module.
+### Global Requirements
 
 ~~~
 npm install stripe -g
 ~~~
 
 ### Start the Containers
-1. Create a .env file within the stripe_adapter folder using the included sample for direction.
+1. Rename the env_sample file within the stripe_adapter folder to .env. 
 
-2. Build the containers
+2. Open the .env file and populate with the correct values as indicated within the file. **You will need a Stripe Account and some configuration done within Stripe.**
+
+    *The second step is not necesary if you do not plan on creating external Products nor Create new Subscribers by purchasing a Product.*
+
+### Build the containers
 
 ~~~
+cd poc-entitlements
 docker-compose up --detach
 ~~~
 
-3. Setup the Database and Run the Migrations
+### Setup the Database and Run the Migrations
 
 ~~~
 cd backend
@@ -35,40 +39,58 @@ npm run setup
 npm run migrations
 ~~~
 
-4. Run the Database Seed files.
+### Run the Database Seed files.
 
-~~~
-npm run seeds
-~~~
-or this for MVP
+For MVP
+
 ~~~
 npm run seeds-mvp
 ~~~
 
-5. Forward Payment Processors Events to localhost.
+For Future Proof
+
+~~~
+npm run seeds
+~~~
+
+### Forward Payment Processors Events to localhost.
+
+1. Forward the Stripe account events to your local machine.
 
 ~~~
 stripe listen --forward-to localhost:8082/webhook
 ~~~
 
-6. Test your webhook listener.
+2. Test your webhook listener.
+
+Once the forward is in place you can test by running the following command.  You should see the events scroll by in your terminal window.
 
 ~~~
 stripe trigger payment_intent.succeeded
 ~~~
 
-7. Avaiable URLs:
+### Avaiable URLs:
 
-    This is a sample Audacy subscription page that is tied into the backend as well as the payment processor(Stripe)
+A sample Audacy subscription page that is tied into the backend as well as the payment processor(Stripe)
 
-    ***Sample Audacy Subscription Page*** - http://localhost:8082/subscriptions-all.html
+~~~
+http://localhost:8082/subscriptions-all.html
+~~~
 
-    These two links will take you to the Admin Panel(s) GUI.
+MVP for the Admin panel.  Striped down to just Subscribers and a single Product and Entitlement.
 
-    ***Entitlements Admin MVP*** - http://localhost:5174
+~~~
+http://localhost:5174
+~~~
 
-    ***Entitlements Admin Future Proofed*** - http://localhost:5173
+Down the road version of the Admin Panel with all the bells and whistles enabled.
 
-    Audacy Entitlement API Contracts.
+~~~
+http://localhost:5173
+~~~
 
-    ***API Documentation*** - http://localhost:8080/api-doc
+Here you will find the Swagger docs as well as being able to test the API calls against the server..
+
+~~~
+http://localhost:8080/api-doc
+~~~
