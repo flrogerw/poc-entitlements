@@ -57,14 +57,14 @@ stripe trigger payment_intent.succeeded
 
     This is a sample Audacy subscription page that is tied into the backend as well as the payment processor(Stripe)
 
-    [Sample Audacy Subscription Page](http://localhost:8082/subscriptions-all.html)
+    Sample Audacy Subscription Page - http://localhost:8082/subscriptions-all.html
 
     These two links will take you to the Admin Panel(s) GUI.
 
-    [Entitlements Admin MVP](http://localhost:5174)
+    Entitlements Admin MVP - http://localhost:5174
 
-    [Entitlements Admin Future Proofed](http://localhost:5173)
+    Entitlements Admin Future Proofed - http://localhost:5173
 
     Audacy Entitlement API Contracts.
-    
-    [API Documentation](http://localhost:8080/api-doc)
+
+    API Documentation - http://localhost:8080/api-doc
