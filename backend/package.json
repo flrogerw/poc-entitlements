@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node server.js",
+    "setup": "node ./knex/create_db.js",
     "migrations": "knex --knexfile ./knex/knexfile-local.js migrate:latest",
     "seeds": "knex --knexfile ./knex/knexfile-local.js seed:run --specific=setup.js",
     "seeds-mvp": "knex --knexfile ./knex/knexfile-local.js seed:run --specific=mvp.js"
