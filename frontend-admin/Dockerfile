@@ -14,6 +14,7 @@ RUN npm install
 
 # Bundle app source
 COPY . .
+COPY env_sample .env
 
 EXPOSE 5173
 CMD [ "npm", "run", "dev" ]

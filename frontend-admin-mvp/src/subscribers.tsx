@@ -55,6 +55,9 @@ export const SubscriberEdit = () => (
                     <TextField source="end_date" />
                 </Datagrid>
             </ArrayField>
+            <ReferenceArrayInput source="newProducts" reference="products" >
+                <SelectArrayInput label="Products" sx={{ width: 450 }} name="newProducts" helperText="Add a new Product to the Subscriber"/>
+            </ReferenceArrayInput>
             <h3>Current Entitlements</ h3>
             <ArrayField source="entitlements" >
                 <Datagrid>
@@ -65,6 +68,9 @@ export const SubscriberEdit = () => (
                     <TextField source="is_active" label="Entitlement Active" />
                 </Datagrid>
             </ArrayField>
+            <ReferenceArrayInput source="newEntitlements" reference="entitlements" >
+                <SelectArrayInput  helperText="Add a new Entitlement to the Subscriber" name="newEntitlements" label="Entitlements" sx={{ width: 450 }}/>
+            </ReferenceArrayInput>
         </SimpleForm>
     </Edit >
 );
