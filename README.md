@@ -18,9 +18,11 @@ npm install stripe -g
 ### Start the Containers
 1. Rename the env_sample file within the stripe_adapter folder to .env. 
 
-2. Open the .env file and populate with the correct values as indicated within the file. **You will need a Stripe Account and some configuration done within Stripe.**
+2. Open the .env file and populate with the Stripe Token supplied by Stripe. **You will need a Stripe Account and some configuration done within Stripe.**
 
-    *The second step is not necesary if you do not plan on creating external Products nor Create new Subscribers by purchasing a Product.*
+3. We will populate the 'STRIPE_ENDPOINT_SECRET' further down in the steps..
+
+    *The second and third step is not necesary if you do not plan on creating external Products nor Create new Subscribers by purchasing a Product.*
 
 ### Build the containers
 
@@ -54,6 +56,7 @@ npm run seeds
 ~~~
 
 ### Forward Payment Processors Events to localhost.
+*Skip these stps if you did not add your Stripe account information above.*
 
 1. Forward the Stripe account events to your local machine.
 
@@ -61,7 +64,11 @@ npm run seeds
 stripe listen --forward-to localhost:8082/webhook
 ~~~
 
-2. Test your webhook listener.
+2. Pay attention to the response.  It will return the 'webhook signing secret' that you will need for the .env file you created above.
+
+3. Open the .env file within the stripe_adapter folder and use the above returned value to populate 'STRIPE_ENDPOINT_SECRET'.
+
+4. Test your webhook listener.
 
 Once the forward is in place you can test by running the following command.  You should see the events scroll by in your terminal window.
 
@@ -83,7 +90,7 @@ MVP for the Admin panel.  Striped down to just Subscribers and a single Product 
 http://localhost:5174
 ~~~
 
-Down the road version of the Admin Panel with all the bells and whistles enabled.
+Admin Panel with all the bells and whistles enabled.
 
 ~~~
 http://localhost:5173

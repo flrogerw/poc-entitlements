@@ -3,15 +3,15 @@ const stripe = require('stripe')(process.env.STRIPE_TOKEN);
 const axios = require('axios');
 const { v4: uuidv4 } = require('uuid');
 
-const YOUR_DOMAIN = 'http://localhost:8082';
+const YOUR_DOMAIN = process.env.DOMAIN_NAME;
 
 const backendApi = axios.create({
-    baseURL: 'http://poc-entitlements-backend-1:8080',
+    baseURL: process.env.BACKEND_API,
     timeout: 1000
 });
 
 const paymentApi = axios.create({
-    baseURL: 'https://api.stripe.com/v1',
+    baseURL: process.env.PAYMENT_PROCESSOR_API,
     headers: {
         'Authorization': `Bearer ${process.env.STRIPE_TOKEN}`
     },
